@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "base": "b100",
+  "head": "h101",
+  "workingTree": "snapshot",
+  "mode": "fallback",
+  "verification": "not-verified",
+  "changedPaths": [
+    {
+      "status": "M",
+      "path": "packages/cart/src/discount.ts",
+      "previousPath": null
+    },
+    {
+      "status": "A",
+      "path": "packages/cart/test/coupon-boundary.test.ts",
+      "previousPath": null
+    }
+  ],
+  "evidence": [
+    {
+      "id": "E1",
+      "origin": "supplied",
+      "source": "checkout-change.md#L5",
+      "revision": "h101",
+      "summary": "h101 的 package.json 提供 test:cart 与 test:all；CI 还有独立必需 security job。"
+    },
+    {
+      "id": "E2",
+      "origin": "supplied",
+      "source": "checkout-change.md#L7",
+      "revision": "b100",
+      "summary": "选择映射生成于 b100，complete=true，但只把 discount.ts 映射到 discount.test.ts。"
+    },
+    {
+      "id": "E3",
+      "origin": "supplied",
+      "source": "checkout-change.md#L7",
+      "revision": "h101",
+      "summary": "h101 测试目录含 discount.test.ts、coupon-boundary.test.ts 与 checkout-integration.test.ts；coupon-boundary.test.ts 是 base 后新增。"
+    },
+    {
+      "id": "E4",
+      "origin": "supplied",
+      "source": "checkout-change.md#L7",
+      "revision": null,
+      "summary": "collector received=1200/applied=1200，但 selector snapshot sequence=1180，journal committed sequence=1200。"
+    },
+    {
+      "id": "E5",
+      "origin": "supplied",
+      "source": "checkout-change.md#L9",
+      "revision": "b100",
+      "summary": "供应日志显示 b100 上 npm run test:cart exit=0；没有 h101 上执行过命令。"
+    }
+  ],
+  "freshness": [
+    {
+      "subject": "selector",
+      "status": "stale",
+      "reason": "映射在 b100 生成，且 selector snapshot sequence 落后于 committed sequence；新增 coupon-boundary.test.ts 不在 base 映射内。",
+      "evidenceIds": ["E2", "E3", "E4"]
+    },
+    {
+      "subject": "test-results",
+      "status": "stale",
+      "reason": "唯一通过日志属于 b100，不覆盖目标 h101。",
+      "evidenceIds": ["E5"]
+    },
+    {
+      "subject": "dependency-graph",
+      "status": "unknown",
+      "reason": "未提供依赖图或 b100 到 h101 的完整桥接，无法安全缩小到旧映射命中的单测。",
+      "evidenceIds": ["E2"]
+    }
+  ],
+  "checks": [
+    {
+      "id": "all-tests",
+      "scope": "repository at h101",
+      "command": "npm run test:all",
+      "required": true,
+      "status": "planned",
+      "reason": "选择器和映射证据不足以做 bounded 选择；h101 当前配置提供完整测试命令。",
+      "evidenceIds": ["E1", "E2", "E3", "E4"]
+    },
+    {
+      "id": "security",
+      "scope": "CI required security job at h101",
+      "command": null,
+      "required": true,
+      "status": "planned",
+      "reason": "CI 始终运行独立必需安全任务；小改动、截止时间或 CI 拥堵都不是省略理由。",
+      "evidenceIds": ["E1"]
+    }
+  ],
+  "omissions": [],
+  "gaps": [
+    "缺少 h101 的通过结果；b100 通过日志不能作为合并或部署验证。",
+    "缺少完整依赖图和从 b100 映射桥接到 h101 的证据。",
+    "selector snapshot sequence 1180 落后 committed sequence 1200。"
+  ],
+  "nextActions": [
+    "在 h101 上执行已知的 npm run test:all，并触发/等待必需 security CI job。",
+    "如果要缩小范围，先收集 h101 的完整映射、目录、依赖图与 selector 水位，再重新评估。"
+  ]
+}

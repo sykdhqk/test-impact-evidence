@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "base": "b300",
+  "head": "h301",
+  "workingTree": "snapshot",
+  "mode": "bounded",
+  "verification": "supplied-passing",
+  "changedPaths": [
+    {
+      "status": "M",
+      "path": "packages/docs/src/slug.ts",
+      "previousPath": null
+    }
+  ],
+  "evidence": [
+    {
+      "id": "E1",
+      "origin": "supplied",
+      "source": "bounded-docs.md#L5",
+      "revision": "h301",
+      "summary": "h301 workspace config 定义 test:docs = node --test packages/docs/test/*.test.mjs。"
+    },
+    {
+      "id": "E2",
+      "origin": "supplied",
+      "source": "bounded-docs.md#L5",
+      "revision": "h301",
+      "summary": "依赖图和测试目录均为 h301 且 complete=true；docs 反向依赖为空，没有其他变更或共享配置变更。"
+    },
+    {
+      "id": "E3",
+      "origin": "supplied",
+      "source": "bounded-docs.md#L5",
+      "revision": "h301",
+      "summary": "h301 coverage map 对 docs 完整，并把 slug.ts 映射到 slug.test.mjs；collector/applied/committed/selector 均为 88 且一起捕获。"
+    },
+    {
+      "id": "E4",
+      "origin": "supplied",
+      "source": "bounded-docs.md#L5",
+      "revision": "h301",
+      "summary": "必需检查只有 docs package tests；供应日志显示 h301 上 npm run test:docs exit=0。"
+    }
+  ],
+  "freshness": [
+    {
+      "subject": "dependency-graph-and-catalog",
+      "status": "current",
+      "reason": "依赖图和测试目录均 attests h301 且 complete=true。",
+      "evidenceIds": ["E2"]
+    },
+    {
+      "subject": "selector",
+      "status": "current",
+      "reason": "coverage map 在 h301 完整，collector/applied/committed/selector 水位一致且一起捕获。",
+      "evidenceIds": ["E3"]
+    },
+    {
+      "subject": "test-results",
+      "status": "current",
+      "reason": "供应通过日志匹配 h301 和唯一必需 docs 检查。",
+      "evidenceIds": ["E4"]
+    }
+  ],
+  "checks": [
+    {
+      "id": "docs-package-tests",
+      "scope": "packages/docs at h301",
+      "command": "npm run test:docs",
+      "required": true,
+      "status": "supplied-pass",
+      "reason": "这是唯一必需检查；供应日志在 h301 上通过，且 bounded 映射当前完整。",
+      "evidenceIds": ["E1", "E2", "E3", "E4"]
+    }
+  ],
+  "omissions": [
+    {
+      "scope": "full monorepo suite",
+      "reason": "h301 完整依赖图显示 docs 无反向依赖，且没有共享配置、删除、添加或重命名变更；唯一必需 docs 检查已有 h301 通过日志。",
+      "evidenceIds": ["E2", "E3", "E4"]
+    }
+  ],
+  "gaps": [],
+  "nextActions": [
+    "若 head 或工作树发生变化，重新收集 h301 等价状态的映射、依赖图和结果。"
+  ]
+}

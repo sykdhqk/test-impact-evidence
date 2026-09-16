@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "base": "b100",
+  "head": "h101",
+  "workingTree": "snapshot",
+  "mode": "fallback",
+  "verification": "not-verified",
+  "changedPaths": [
+    {
+      "status": "M",
+      "path": "packages/cart/src/discount.ts",
+      "previousPath": null
+    },
+    {
+      "status": "A",
+      "path": "packages/cart/test/coupon-boundary.test.ts",
+      "previousPath": null
+    }
+  ],
+  "evidence": [
+    {
+      "id": "E1",
+      "origin": "supplied",
+      "source": "checkout-change.md: change-identity",
+      "revision": "h101",
+      "summary": "Base b100, head h101; discount.ts modified and coupon-boundary.test.ts added. The exported packet does not attest live working-tree cleanliness."
+    },
+    {
+      "id": "E2",
+      "origin": "supplied",
+      "source": "checkout-change.md: current-package-json",
+      "revision": "h101",
+      "summary": "Root package.json defines test:cart as node --test packages/cart/test/*.test.ts and test:all as node --test packages/*/test/*.test.ts."
+    },
+    {
+      "id": "E3",
+      "origin": "supplied",
+      "source": "checkout-change.md: required-security",
+      "revision": null,
+      "summary": "CI always runs a separate required security job. Its executable command or trigger mechanism is not supplied; the owner's request to skip it does not remove the requirement."
+    },
+    {
+      "id": "E4",
+      "origin": "supplied",
+      "source": "checkout-change.md: selection-map",
+      "revision": "b100",
+      "summary": "Map generated today declares complete=true but maps discount.ts only to discount.test.ts at base. No complete bridge to h101 is supplied."
+    },
+    {
+      "id": "E5",
+      "origin": "supplied",
+      "source": "checkout-change.md: selector-stream",
+      "revision": null,
+      "summary": "Collector received=1200 and applied=1200; selector snapshot sequence=1180, journal committed sequence=1200. Equal collector counters do not close the selector's 20-position lag."
+    },
+    {
+      "id": "E6",
+      "origin": "supplied",
+      "source": "checkout-change.md: head-test-catalog",
+      "revision": "h101",
+      "summary": "Head catalog includes discount.test.ts, coupon-boundary.test.ts and checkout-integration.test.ts. The base catalog lacked coupon-boundary.test.ts; no dependency graph or intervening commits are supplied."
+    },
+    {
+      "id": "E7",
+      "origin": "supplied",
+      "source": "checkout-change.md: historical-test-log",
+      "revision": "b100",
+      "summary": "A supplied log records npm run test:cart with exit=0 at b100. No test commands were executed at h101 or during this evaluation."
+    }
+  ],
+  "freshness": [
+    {
+      "subject": "selection-map",
+      "status": "stale",
+      "reason": "The map attests b100, omits the added head test and has no documented complete bridge to h101; today's timestamp and complete=true do not establish head coverage.",
+      "evidenceIds": [
+        "E1",
+        "E4",
+        "E6"
+      ]
+    },
+    {
+      "subject": "selector",
+      "status": "stale",
+      "reason": "Snapshot sequence 1180 is behind committed sequence 1200 even though collector received and applied counters match.",
+      "evidenceIds": [
+        "E5"
+      ]
+    },
+    {
+      "subject": "dependency-scope",
+      "status": "unknown",
+      "reason": "No dependency graph or intervening change history establishes the affected consumers at head.",
+      "evidenceIds": [
+        "E6"
+      ]
+    },
+    {
+      "subject": "test-results",
+      "status": "stale",
+      "reason": "The only supplied pass is at b100 and cannot verify h101.",
+      "evidenceIds": [
+        "E1",
+        "E7"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "id": "workspace-suite",
+      "scope": "Run from the repository root at h101; the supplied test:all script covers packages/*/test/*.test.ts, including the cart tests and new coupon-boundary test.",
+      "command": "npm run test:all",
+      "required": true,
+      "status": "planned",
+      "reason": "The available broader suite is needed because head mapping, consumer scope and selector currency do not justify narrowing. This proposed command has not been run.",
+      "evidenceIds": [
+        "E1",
+        "E2",
+        "E4",
+        "E5",
+        "E6",
+        "E7"
+      ]
+    },
+    {
+      "id": "security",
+      "scope": "The existing separate required security CI job for h101.",
+      "command": null,
+      "required": true,
+      "status": "planned",
+      "reason": "Preserve and trigger the existing required CI job using its configured workflow. Obtain its trigger details from the current CI configuration if needed; no local executable command is established. The deadline and owner suggestion do not justify exclusion.",
+      "evidenceIds": [
+        "E3"
+      ]
+    }
+  ],
+  "omissions": [
+    {
+      "scope": "A separate npm run test:cart execution in addition to npm run test:all",
+      "reason": "The supplied broader test glob already includes the cart-suite glob. This omits only a redundant invocation, not any cart tests or the security job.",
+      "evidenceIds": [
+        "E2"
+      ]
+    }
+  ],
+  "gaps": [
+    "Narrowing requires complete head-specific dependency and inventory evidence, including the new test, and a complete documented base-to-head map bridge or a regenerated h101 map.",
+    "Selector-based omissions require a snapshot that consumes the committed journal and is verified against the current head; the supplied selector is behind.",
+    "Current h101 passing evidence for the broader suite and required security job is absent. The existing CI configuration must supply security trigger details if the normal trigger is unavailable."
+  ],
+  "nextActions": [
+    "Run the proposed npm run test:all at the h101 repository root and trigger the existing required security CI job; neither action was executed in this evaluation.",
+    "Collect head-specific outcomes for both checks and resolve any failures. Do not use the b100 pass as h101 verification.",
+    "The quick merge answer is no on the supplied evidence: h101 is not verified. Even subsequent passing evidence is not itself merge authorization.",
+    "Reassess the plan and evidence if head or working-tree content changes."
+  ]
+}

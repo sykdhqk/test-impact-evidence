@@ -1,0 +1,123 @@
+{
+  "schemaVersion": 1,
+  "base": "b200",
+  "head": "h201",
+  "workingTree": "snapshot",
+  "mode": "blocked",
+  "verification": "not-verified",
+  "changedPaths": [
+    {
+      "status": "D",
+      "path": "packages/common/src/money.ts",
+      "previousPath": null
+    },
+    {
+      "status": "R",
+      "path": "packages/api/src/transport.ts",
+      "previousPath": "packages/api/src/client.ts"
+    },
+    {
+      "status": "M",
+      "path": "tsconfig.base.json",
+      "previousPath": null
+    }
+  ],
+  "evidence": [
+    {
+      "id": "E1",
+      "origin": "supplied",
+      "source": "missing-commands.md#L5",
+      "revision": "h201",
+      "summary": "变更包含删除 common money.ts、API client.ts 重命名为 transport.ts、修改 tsconfig.base.json。"
+    },
+    {
+      "id": "E2",
+      "origin": "supplied",
+      "source": "missing-commands.md#L5",
+      "revision": null,
+      "summary": "owner map 将 packages/common 关联到 cart、billing 和 api。"
+    },
+    {
+      "id": "E3",
+      "origin": "supplied",
+      "source": "missing-commands.md#L5",
+      "revision": null,
+      "summary": "API 包通过未供应的生成 registry 导入旧 client 路径。"
+    },
+    {
+      "id": "E4",
+      "origin": "supplied",
+      "source": "missing-commands.md#L5",
+      "revision": "h201",
+      "summary": "导出不含 package.json、lockfile、CI workflow 或测试命令；b190 README 的 npm test 不能证明 h201 当前命令存在。"
+    }
+  ],
+  "freshness": [
+    {
+      "subject": "execution-config",
+      "status": "unknown",
+      "reason": "h201 当前 manifest、lockfile 和 CI workflow 均未供应。",
+      "evidenceIds": ["E4"]
+    },
+    {
+      "subject": "selector",
+      "status": "not-needed",
+      "reason": "没有基于选择器做缩小范围的主张；阻塞点是当前命令与配置缺失。",
+      "evidenceIds": []
+    },
+    {
+      "subject": "generated-registry",
+      "status": "unknown",
+      "reason": "registry 未供应，无法判断 API rename 对消费者的实际影响。",
+      "evidenceIds": ["E3"]
+    }
+  ],
+  "checks": [
+    {
+      "id": "cart-consumer",
+      "scope": "cart consumer of packages/common at h201",
+      "command": null,
+      "required": true,
+      "status": "blocked",
+      "reason": "owner map 显示 cart 受 packages/common 影响，但 h201 当前测试/构建命令缺失。",
+      "evidenceIds": ["E1", "E2", "E4"]
+    },
+    {
+      "id": "billing-consumer",
+      "scope": "billing consumer of packages/common at h201",
+      "command": null,
+      "required": true,
+      "status": "blocked",
+      "reason": "删除 money.ts 可能直接影响 billing；删除文件不是跳过 billing 的理由，当前命令缺失。",
+      "evidenceIds": ["E1", "E2", "E4"]
+    },
+    {
+      "id": "api-consumer",
+      "scope": "api package and generated registry at h201",
+      "command": null,
+      "required": true,
+      "status": "blocked",
+      "reason": "API rename 与未供应 registry 可能保留旧 client 路径；当前命令和 registry 均缺失。",
+      "evidenceIds": ["E1", "E3", "E4"]
+    },
+    {
+      "id": "shared-tsconfig-validation",
+      "scope": "workspace TypeScript/shared configuration at h201",
+      "command": null,
+      "required": true,
+      "status": "blocked",
+      "reason": "tsconfig.base.json 是共享配置变更，但没有 h201 构建、类型检查或 CI 命令。",
+      "evidenceIds": ["E1", "E4"]
+    }
+  ],
+  "omissions": [],
+  "gaps": [
+    "缺少 h201 的 package.json、lockfile、CI workflow 和测试/构建命令，因此不能给出精确可运行命令。",
+    "缺少生成 registry，无法确认 API rename 是否仍被旧路径引用。",
+    "b190 README 中的 npm test 不是 h201 当前执行配置证据。"
+  ],
+  "nextActions": [
+    "提供 h201 的 package.json、lockfile、CI workflow 和生成 registry。",
+    "拿到当前配置后，为 cart、billing、api 与共享 TypeScript 配置选择对应的测试/构建/类型检查命令。"
+  ]
+}

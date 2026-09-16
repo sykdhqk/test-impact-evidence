@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "base": "b400",
+  "head": "h401",
+  "workingTree": "snapshot",
+  "mode": "bounded",
+  "verification": "not-verified",
+  "changedPaths": [
+    {
+      "status": "unknown",
+      "path": "packages/cart/src/totals.ts",
+      "previousPath": null
+    }
+  ],
+  "evidence": [
+    {
+      "id": "E1",
+      "origin": "supplied",
+      "source": "out-of-order-results.md#L5",
+      "revision": "h401",
+      "summary": "完整 h401 graph 显示 totals 只被 cart 使用；当前必需检查为 cart-unit 和 cart-contract，命令与 fallback 命令均由 h401 package.json 证明。"
+    },
+    {
+      "id": "E2",
+      "origin": "supplied",
+      "source": "out-of-order-results.md#L5",
+      "revision": "h401",
+      "summary": "h401 测试目录完整，选择映射列出 cart-unit 和 cart-contract。"
+    },
+    {
+      "id": "E3",
+      "origin": "supplied",
+      "source": "out-of-order-results.md#L7",
+      "revision": null,
+      "summary": "collector journal offset 与 selector snapshot offset 均为 402，但 offset 是到达位置，不是测试运行顺序。"
+    },
+    {
+      "id": "E4",
+      "origin": "supplied",
+      "source": "out-of-order-results.md#L9-L14",
+      "revision": "h401",
+      "summary": "cart-unit: U20 attempt 2 created 09:00 pass；U21 attempt 1 created 09:05 fail。不同 runId 独立，较晚创建的 U21 failure 不被较晚到达的旧 U20 pass 覆盖。"
+    },
+    {
+      "id": "E5",
+      "origin": "supplied",
+      "source": "out-of-order-results.md#L9-L14",
+      "revision": "h401",
+      "summary": "cart-contract: 同一 runId C7 attempt 1 fail，attempt 2 pass；同一 run 内 retry 通过覆盖先前失败。"
+    },
+    {
+      "id": "E6",
+      "origin": "supplied",
+      "source": "out-of-order-results.md#L16",
+      "revision": null,
+      "summary": "cached selector summary 声称两项均 pass、healthy、budget=0、omitted checks=both，但它按到达绿行与相等 offset 误判。"
+    }
+  ],
+  "freshness": [
+    {
+      "subject": "selector",
+      "status": "current",
+      "reason": "offset 证明 selector 消费到 402，且 h401 map 包含两个必需检查；但 offset 不能用作结果运行顺序。",
+      "evidenceIds": ["E2", "E3"]
+    },
+    {
+      "subject": "test-results-ordering",
+      "status": "current",
+      "reason": "created 时间是权威 CI run start；arrival 只是接收时间。按 runId 分组后 cart-unit 最新独立 run 失败，cart-contract 同 run 重试通过。",
+      "evidenceIds": ["E4", "E5"]
+    }
+  ],
+  "checks": [
+    {
+      "id": "cart-unit",
+      "scope": "cart unit checks at h401",
+      "command": "npm run test:cart-unit",
+      "required": true,
+      "status": "supplied-fail",
+      "reason": "U21 是比 U20 更晚创建的独立 run 且失败；U20 较晚到达的 pass 不能覆盖 U21 failure。",
+      "evidenceIds": ["E1", "E4"]
+    },
+    {
+      "id": "cart-contract",
+      "scope": "cart contract checks at h401",
+      "command": "npm run test:cart-contract",
+      "required": true,
+      "status": "supplied-pass",
+      "reason": "C7 attempt 2 是同一 run 的重试并通过，可覆盖 C7 attempt 1 failure。",
+      "evidenceIds": ["E1", "E5"]
+    }
+  ],
+  "omissions": [
+    {
+      "scope": "npm run test:all",
+      "reason": "完整 h401 graph 显示 totals 只影响 cart，h401 selection map 覆盖两个 cart 必需检查；当前最小下一步是修复或重跑失败的 cart-unit，而不是扩大到 full fallback。",
+      "evidenceIds": ["E1", "E2"]
+    }
+  ],
+  "gaps": [
+    "cart-unit 在 h401 的最新独立 run 为失败，且没有隔离/豁免批准。",
+    "cached selector summary 使用到达顺序和相等 offset 作为通过依据，不能作为验证结论。"
+  ],
+  "nextActions": [
+    "不要部署；先处理 cart-unit 的 h401 failure。",
+    "最小合理动作是在修复或确认后重跑 npm run test:cart-unit，并保留 cart-contract 的已供应通过结果，除非 head 或配置变化。"
+  ]
+}
