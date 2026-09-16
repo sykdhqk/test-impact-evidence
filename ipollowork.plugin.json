@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 2,
+  "id": "test-impact-evidence",
+  "name": "Test Impact Evidence",
+  "description": "Evidence-based test plans for AI-assisted changes, with mapping freshness checks and explicit fallback scope.",
+  "category": "Development & Testing",
+  "source": {
+    "format": "ipollowork-extension-manifest",
+    "origin": "local",
+    "trusted": false,
+    "reference": "https://github.com/sykdhqk/test-impact-evidence"
+  },
+  "composer": {
+    "prompt": "Use test-impact-evidence to plan tests for this change. Read its plan reference and produce test-impact-plan.json and test-impact-plan.md from the available evidence."
+  },
+  "package": {
+    "version": "1.0.0",
+    "publisher": {
+      "id": "sykdhqk",
+      "name": "sykdhqk"
+    },
+    "updateId": "sykdhqk/test-impact-evidence",
+    "compatibility": {
+      "ipollowork": "0.50.12"
+    }
+  },
+  "resources": [
+    {
+      "type": "skill",
+      "id": "test-impact-evidence",
+      "label": "Test Impact Evidence",
+      "description": "Connect changed files, test scope and execution evidence without mistaking a proposed plan for passing CI.",
+      "path": "skills/test-impact-evidence",
+      "required": true
+    }
+  ],
+  "localization": {
+    "defaultLocale": "en",
+    "translations": {
+      "zh-CN": {
+        "name": "测试影响证据",
+        "description": "为 AI 辅助代码变更制定有证据的测试计划，检查映射时效并明确扩大验证范围的条件。",
+        "category": "开发与测试",
+        "composer": {
+          "prompt": "使用 test-impact-evidence 技能及其计划参考文件，分析当前变更并生成 test-impact-plan.json 和 test-impact-plan.md。"
+        },
+        "resources": {
+          "test-impact-evidence": {
+            "label": "测试影响证据",
+            "description": "关联变更、测试范围与执行证据，区分建议执行的计划和已有测试结果。"
+          }
+        }
+      }
+    }
+  }
+}
